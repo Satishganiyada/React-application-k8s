@@ -40,6 +40,9 @@ pipeline {
         stage("updating image name"){
             steps {
                 sh "sed -i 's|satish2323/react-app:v[0-9]+|${IMAGE_NAME}:${IMAGE_TAG}|' sample-webapp/deployment.yaml"
+                sh 'git add sample-webapp/deployment.yaml'
+                sh 'git commit -m "chnges in deployment file'
+                sh 'git push'
             }
         }
         stage('Run Tests') {
