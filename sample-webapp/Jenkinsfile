@@ -37,7 +37,11 @@ pipeline {
                 }
             }
         }
-
+        stage("updating image name"){
+            steps {
+                sh "sed -i 's|satish2323/react-app:v[0-9]+|${IMAGE_NAME}:${IMAGE_TAG}|' deployment.yaml"
+            }
+        }
         stage('Run Tests') {
             steps {
                 echo "Running tests inside the Docker container..."
