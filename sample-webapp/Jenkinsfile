@@ -56,9 +56,8 @@ pipeline {
                 // sh 'eval $(minikube docker-env)'
                 // sh "echo 'alias kubectl="minikube kubectl --"' >> ~/.bashrc"
                 // sh "source ~/.bashrc"
-
-                sh 'minikube kubectl -- apply -f deployment.yaml'
-                sh 'minikube kubectl -- apply -f service.yaml'
+                sh 'minikube kubectl apply -f sample-webapp/deployment.yaml'
+                sh 'minikube kubectl apply -f sample-webapp/service.yaml'
 
 
                 // // Update deployment image to the new one
