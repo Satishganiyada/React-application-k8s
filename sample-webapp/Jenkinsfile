@@ -52,16 +52,16 @@ pipeline {
                 // sh "echo 'alias kubectl="minikube kubectl --"' >> ~/.bashrc"
                 // sh "source ~/.bashrc"
 
-                sh 'minikube kubectl apply -f deployment.yaml'
+                sh 'minikube kubectl -- apply -f deployment.yaml'
 
                 // Update deployment image to the new one
                 // sh "kubectl set image deployment/react-app-deployment react-container=${IMAGE_NAME}:${IMAGE_TAG} --record"
-                sh "minikube kubectl set image deployment/${DEPLOYMENT_NAME} ${CONTAINER_NAME}=${IMAGE_NAME}:${IMAGE_TAG} --record"
+                sh "minikube kubectl -- set image deployment/${DEPLOYMENT_NAME} ${CONTAINER_NAME}=${IMAGE_NAME}:${IMAGE_TAG} --record"
                 // Apply service YAML (if not already applied)
                 sh "minikube kubectl apply -f ${SERVICE_FILE}"
 
                 // Wait for rollout to complete
-                sh "minikube kubectl rollout status deployment/react-app-deployment"
+                sh "minikube kubectl -- rollout status deployment/react-app-deployment"
                 sh "minikube service my-app-service --url"
             }
         }
