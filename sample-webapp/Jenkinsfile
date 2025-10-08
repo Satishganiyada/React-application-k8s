@@ -20,7 +20,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}..."
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                sh "sudo docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
             }
         }
 
@@ -32,7 +32,7 @@ pipeline {
                                                   passwordVariable: 'Satish@216')]) {
                     sh '''
                         echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                        sudo docker push ${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
             }
@@ -41,7 +41,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo "Running tests inside the Docker container..."
-                sh "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} npm test -- --watchAll=false"
+                sh "sudo docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} npm test -- --watchAll=false"
             }
         }
 
