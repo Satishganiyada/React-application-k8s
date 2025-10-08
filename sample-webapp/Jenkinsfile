@@ -6,6 +6,8 @@ pipeline {
         IMAGE_TAG = "v${env.BUILD_NUMBER}"    // Unique tag per build
         DEPLOYMENT_FILE = "deployment.yaml"
         SERVICE_FILE = "service.yaml"
+        DEPLOYMENT_NAME = "my-app-deployment"
+        CONTAINER_NAME = "my-app-container"
     }
 
     stages {
@@ -48,14 +50,17 @@ pipeline {
                 echo "Deploying to Minikube..."
                 sh 'eval $(minikube docker-env)'
 
+                sh 'kubectl apply -f deployment.yaml'
+
                 // Update deployment image to the new one
-                sh "kubectl set image deployment/react-app-deployment react-container=${IMAGE_NAME}:${IMAGE_TAG} --record"
-                
+                // sh "kubectl set image deployment/react-app-deployment react-container=${IMAGE_NAME}:${IMAGE_TAG} --record"
+                sh "kubectl set image deployment/${DEPLOYMENT_NAME} ${CONTAINER_NAME}=${IMAGE_NAME}:${IMAGE_TAG} --record"
                 // Apply service YAML (if not already applied)
                 sh "kubectl apply -f ${SERVICE_FILE}"
 
                 // Wait for rollout to complete
                 sh "kubectl rollout status deployment/react-app-deployment"
+                sh "minikube service my-app-service --url"
             }
         }
     }
