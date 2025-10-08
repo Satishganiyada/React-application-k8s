@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REPO_URL = "git@github.com:Satishganiyada/React-application-k8s"
+        REPO_URL = "git@github.com:Satishganiyada/React-application-k8s.git"
         IMAGE_NAME = "satish2323/react-app"   // Registry image name
         IMAGE_TAG = "v${env.BUILD_NUMBER}"    // Unique tag per build
         DEPLOYMENT_FILE = "deployment.yaml"
