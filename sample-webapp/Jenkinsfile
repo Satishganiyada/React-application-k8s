@@ -43,7 +43,14 @@ pipeline {
                 sh 'cat sample-webapp/deployment.yaml'
                 sh 'git add sample-webapp/deployment.yaml'
                 sh 'git commit -m "chnges in deployment file"'
-                sh 'git push -u origin main'
+                withCredentials([usernamePassword(credentialsId: 'gitcred', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                sh '''
+                git config user.email "satishganiyadal@gmail.com"
+                git config user.name "satishganiyada"
+                git remote set-url origin https://$GIT_USER:$GIT_TOKEN@github.com/Satishganiyada/React-application-k8s.git
+                git push -u origin main
+                '''
+            }
             }
         }
         stage('Run Tests') {
