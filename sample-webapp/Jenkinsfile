@@ -12,9 +12,8 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main',
-                    url: 'git@github.com:Satishganiyada/React-application-k8s.git',
-                    credentialsId: 'your-ssh-credentials-id'
+                git branch: 'main' url: 'git@github.com:Satishganiyada/React-application-k8s.git' credentialsId: 'your-ssh-credentials-id'
+                    
             }
         }
 
