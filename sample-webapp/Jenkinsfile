@@ -49,8 +49,8 @@ pipeline {
             steps {
                 echo "Deploying to Minikube..."
                 // sh 'eval $(minikube docker-env)'
-                sh 'echo 'alias kubectl="minikube kubectl --"' >> ~/.bashrc'
-                sh 'source ~/.bashrc'
+                sh "echo 'alias kubectl="minikube kubectl --"' >> ~/.bashrc"
+                sh "source ~/.bashrc"
 
                 sh 'kubectl apply -f deployment.yaml'
 
