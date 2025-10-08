@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = "git@github.com:Satishganiyada/React-application-k8s.git"
+        IMAGE_NAME = "satish2323/react-app"   // Registry image name
+        IMAGE_TAG = "v${env.BUILD_NUMBER}"    // Unique tag per build
+        DEPLOYMENT_FILE = "deployment.yaml"
+        SERVICE_FILE = "service.yaml"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                echo 'Pulling source code from Git...'
+                git branch: 'main', url: "${REPO_URL}"
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}..."
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                echo "Pushing Docker image to Docker Hub..."
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', 
+                                                  usernameVariable: 'DOCKER_USER', 
+                                                  passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo "Running tests inside the Docker container..."
+                sh "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} npm test -- --watchAll=false"
+            }
+        }
+
+        stage('Deploy to Minikube') {
+            steps {
+                echo "Deploying to Minikube..."
+                sh 'eval $(minikube docker-env)'
+
+                // Update deployment image to the new one
+                sh "kubectl set image deployment/react-app-deployment react-container=${IMAGE_NAME}:${IMAGE_TAG} --record"
+                
+                // Apply service YAML (if not already applied)
+                sh "kubectl apply -f ${SERVICE_FILE}"
+
+                // Wait for rollout to complete
+                sh "kubectl rollout status deployment/react-app-deployment"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully: Image built, pushed, tested, and deployed!"
+        }
+        failure {
+            echo "Pipeline failed!"
+        }
+    }
+}
