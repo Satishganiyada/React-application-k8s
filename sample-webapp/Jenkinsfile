@@ -28,8 +28,8 @@ pipeline {
             steps {
                 echo "Pushing Docker image to Docker Hub..."
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', 
-                                                  usernameVariable: 'satish2323', 
-                                                  passwordVariable: 'Satish@216')]) {
+                                                  usernameVariable: 'DOCKER_USER', 
+                                                  passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
                         echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
                         sudo docker push ${IMAGE_NAME}:${IMAGE_TAG}
